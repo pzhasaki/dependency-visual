@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "dependency parser",
+            "request": "launch",
+            "type": "node",
+            "runtimeArgs": [
+                "-r",
+                "ts-node/register"
+            ],
+            "args": [
+                "${workspaceFolder}/dependency-parser/src/index.ts"
+            ]
+        }
+    ],
+    
+}

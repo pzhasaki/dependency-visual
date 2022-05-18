@@ -1,0 +1,59 @@
+{
+  "0 debug pnpm:scope": {
+    "selected": 1
+  },
+  "1 debug pnpm:package-manifest": {
+    "initial": {
+      "name": "denpendency-parser",
+      "version": "1.0.0",
+      "description": "dependency parser",
+      "main": "index.js",
+      "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+      },
+      "author": "",
+      "license": "ISC"
+    },
+    "prefix": "C:\\Users\\15788\\Desktop\\dependency-visual\\denpendency-parser"
+  },
+  "2 debug pnpm:context": {
+    "currentLockfileExists": false,
+    "storeDir": "C:\\Users\\15788\\.pnpm-store\\v3",
+    "virtualStoreDir": "C:\\Users\\15788\\Desktop\\dependency-visual\\denpendency-parser\\node_modules\\.pnpm"
+  },
+  "3 debug pnpm:stage": {
+    "prefix": "C:\\Users\\15788\\Desktop\\dependency-visual\\denpendency-parser",
+    "stage": "resolution_started"
+  },
+  "4 debug pnpm:_dependency_resolved": {
+    "resolution": "registry.npmmirror.com/@babel/traverse/7.17.12",
+    "wanted": {
+      "dependentId": ".",
+      "name": "@babel/traverse",
+      "rawSpec": "latest"
+    }
+  },
+  "5 debug pnpm:progress": {
+    "packageId": "registry.npmmirror.com/@babel/traverse/7.17.12",
+    "requester": "C:\\Users\\15788\\Desktop\\dependency-visual\\denpendency-parser",
+    "status": "resolved"
+  },
+  "6 error pnpm": {
+    "code": "ERR_PNPM_FETCH_404",
+    "hint": "@babel/parse is not in the npm registry, or you have no permission to fetch it.\n\nNo authorization header was set for the request.",
+    "request": {
+      "url": "https://registry.npm.taobao.org/@babel%2Fparse"
+    },
+    "response": {
+      "size": 0
+    },
+    "pkgName": "@babel/parse",
+    "pkgsStack": [],
+    "err": {
+      "name": "pnpm",
+      "message": "GET https://registry.npm.taobao.org/@babel%2Fparse: Not Found - 404",
+      "code": "ERR_PNPM_FETCH_404",
+      "stack": "pnpm: GET https://registry.npm.taobao.org/@babel%2Fparse: Not Found - 404\n    at RetryOperation._fn (C:\\Users\\15788\\AppData\\Roaming\\npm\\node_modules\\pnpm\\dist\\pnpm.cjs:85815:19)\n    at processTicksAndRejections (internal/process/task_queues.js:93:5)"
+    }
+  }
+}
