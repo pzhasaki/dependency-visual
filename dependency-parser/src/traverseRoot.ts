@@ -1,4 +1,5 @@
 import fs from 'fs';
+
 import parser  from '@babel/parser' ;
 import travese  from '@babel/traverse';
 
@@ -75,6 +76,7 @@ function traverseModule(curModulePath: string, dependencyNode: DependencyNode, v
     const moduleContent = fs.readFileSync(curModulePath, {
         encoding: 'utf-8'
     });
+
     dependencyNode.path = curModulePath;
 
     const ast = parser.parse(moduleContent, {
@@ -82,16 +84,15 @@ function traverseModule(curModulePath: string, dependencyNode: DependencyNode, v
         plugins: resolveBabelSyntaxtPlugins(curModulePath)
     });
 
-    console.log(ast);
-
-    /* travese(ast, {
+    travese(ast, {
         ImportDeclaration(path) {
-            const subModulePath = moduleResolver(curModulePath, path.get('source.value').node);
+            console.log(path);
+            // const subModulePath = moduleResolver(curModulePath, path.get('source.value'), visitedModules);
         },
         ExportDeclaration(path) {
 
         }
-    }); */
+    });
 
     resultModules[curModulePath] = dependencyNode;
 }
