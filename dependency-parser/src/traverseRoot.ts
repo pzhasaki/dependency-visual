@@ -1,8 +1,8 @@
-const fs = require('fs');
-const parser = require('@babel/parser');
-const travese = require('@babel/traverse').default;
+import fs from 'fs';
+import parser  from '@babel/parser' ;
+import travese  from '@babel/traverse';
 
-const moduleResolver = require('./utils/moduleResolver');
+import moduleResolver from './utils/moduleResolver';
 
 /* 
     DependencyNode 依赖节点
@@ -45,7 +45,7 @@ const IMPORT_TYPE = {
         return :
             - dependencyGraph 依赖分析的结果
 */
-module.exports = function traverseRoot(rootPath:string) {
+export default function traverseRoot(rootPath:string) {
     /* 
         dependencyGraph: 依赖分析的结果
             - root 根路径
@@ -78,7 +78,7 @@ function traverseModule(curModulePath: string, dependencyNode: DependencyNode, v
     dependencyNode.path = curModulePath;
 
     const ast = parser.parse(moduleContent, {
-        sourceType: 'unamiguous',
+        sourceType: 'unambiguous',
         plugins: resolveBabelSyntaxtPlugins(curModulePath)
     });
 
@@ -104,7 +104,7 @@ function traverseModule(curModulePath: string, dependencyNode: DependencyNode, v
             - babel/parser 所需的插件
 */
 function resolveBabelSyntaxtPlugins(modulePath: string) {
-    const plugins = [];
+    const plugins:parser.ParserPlugin[] = [];
     if (['.tsx', '.jsx'].some(ext => modulePath.endsWith(ext))) {
         plugins.push('jsx');
     }

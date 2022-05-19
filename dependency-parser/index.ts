@@ -1,6 +1,5 @@
-const path = require('path');
-// const fs = require('fs');
+import path from 'path';
 
-const traverseRoot = require('./src/traverseRoot');
+import traverseRoot from './src/traverseRoot';
 
 const dependencyGraph = traverseRoot(path.resolve(__dirname, '../test-project/index.js'));

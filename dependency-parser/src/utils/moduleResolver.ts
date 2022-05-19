@@ -10,7 +10,7 @@ import fs from 'fs';
         return
             请求模块的绝对路径    
 */
-module.exports = function moduleResolver(curModulePath: string, requirePath: string, visitedModules: Set<string>):string {
+export default function moduleResolver(curModulePath: string, requirePath: string, visitedModules: Set<string>):string {
 
     requirePath = path.resolve(path.dirname(curModulePath), requirePath);
 
