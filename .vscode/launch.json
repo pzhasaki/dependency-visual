@@ -9,7 +9,7 @@
                 "ts-node/register"
             ],
             "args": [
-                "${workspaceFolder}/dependency-parser/src/index.ts"
+                "${workspaceFolder}/dependency-parser/index.ts"
             ]
         }
     ],
