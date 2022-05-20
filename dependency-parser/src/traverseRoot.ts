@@ -1,9 +1,12 @@
 import fs from 'fs';
 
-import parser  from '@babel/parser' ;
-import travese  from '@babel/traverse';
+import * as parser from '@babel/parser';
+import traverse from '@babel/traverse';
 
 import moduleResolver from './utils/moduleResolver';
+
+import type { NodePath } from '@babel/traverse';
+import { ExportSpecifier, Identifier } from '@babel/types';
 
 /* 
     DependencyNode 依赖节点
@@ -17,9 +20,9 @@ class DependencyNode {
     */
     path: string;
     imports: Record<string, any>;
-    exports: Record<string, any>;
+    exports: Record<string, any>[];
     subModules: Record<string, any>;
-    constructor(path:string = '', imports = {}, exports = {}) {
+    constructor(path: string = '', imports = {}, exports = []) {
         this.path = path;
         this.imports = imports;
         this.exports = exports;
@@ -29,7 +32,7 @@ class DependencyNode {
 
 /* 
     ImportDeclaration 的类型
-        - 解构引入
+        - 按需引入
         - 命名空间引入
         - 默认引入
 */
@@ -40,13 +43,25 @@ const IMPORT_TYPE = {
 }
 
 /* 
-    parsingRoot 处理根路径，返回依赖分析的结果
+    ExportDeclaration 的类型
+        - 全部导出
+        - 默认导出
+        - 命名导出
+*/
+const EXPORT_TYPE = {
+    all: 'all',
+    default: 'default',
+    named: 'named'
+}
+
+/* 
+    traverseRoot 处理根路径，返回依赖分析的结果
         params :
             - rootPath 根路径
         return :
             - dependencyGraph 依赖分析的结果
 */
-export default function traverseRoot(rootPath:string) {
+export default function traverseRoot(rootPath: string) {
     /* 
         dependencyGraph: 依赖分析的结果
             - root 根路径
@@ -84,13 +99,69 @@ function traverseModule(curModulePath: string, dependencyNode: DependencyNode, v
         plugins: resolveBabelSyntaxtPlugins(curModulePath)
     });
 
-    travese(ast, {
+    traverse(ast, {
         ImportDeclaration(path) {
-            console.log(path);
-            // const subModulePath = moduleResolver(curModulePath, path.get('source.value'), visitedModules);
+            // 子依赖路径
+            const subModulePath = moduleResolver(curModulePath, path.node.source.value, visitedModules);
+            if (!subModulePath) return;
+
+            const specifierPaths = path.get('specifiers');
+
+            dependencyNode.imports[subModulePath] = specifierPaths.map(specifierPath => {
+                if (specifierPath.isImportSpecifier()) {
+                    return {
+                        type: IMPORT_TYPE.deconstruct,
+                        imported: (specifierPath.get('imported') as NodePath<Identifier>).node.name,
+                        local: specifierPath.get('local').node.name
+                    }
+                } else if (specifierPath.isImportDefaultSpecifier()) {
+                    return {
+                        type: IMPORT_TYPE.default,
+                        local: specifierPath.get('local').node.name
+                    }
+                } else {
+                    return {
+                        type: IMPORT_TYPE.namespace,
+                        local: specifierPath.get('local').node.name
+                    }
+                }
+            });
+
+            const subModule = new DependencyNode();
+            traverseModule(subModulePath, subModule, visitedModules, resultModules);
+            dependencyNode.subModules[subModulePath] = subModule;
         },
         ExportDeclaration(path) {
+            if (path.isExportNamedDeclaration()) {
+                const specifierPaths = path.get('specifiers') as NodePath<ExportSpecifier>[];
 
+                dependencyNode.exports = specifierPaths.map(specifierPath => {
+                    return {
+                        type: EXPORT_TYPE.named,
+                        exported: (specifierPath.get('exported') as NodePath<Identifier>).node.name,
+                        local: specifierPath.get('local').node.name
+                    };
+                });
+            } else if (path.isExportDefaultDeclaration()) {
+                let exportName;
+                const declarationPath = path.get('declaration');
+                if (declarationPath.isAssignmentExpression()) {
+                    exportName = declarationPath.get('left').toString();
+                } else {
+                    exportName = declarationPath.toString()
+                }
+                dependencyNode.exports.push({
+                    type: EXPORT_TYPE.default,
+                    exported: exportName
+                });
+            } else if (path.isExportAllDeclaration()) {
+
+                dependencyNode.exports.push({
+                    type: EXPORT_TYPE.all,
+                    exported: '*',
+                    source: path.get('source').node.value
+                })
+            }
         }
     });
 
@@ -105,7 +176,7 @@ function traverseModule(curModulePath: string, dependencyNode: DependencyNode, v
             - babel/parser 所需的插件
 */
 function resolveBabelSyntaxtPlugins(modulePath: string) {
-    const plugins:parser.ParserPlugin[] = [];
+    const plugins: parser.ParserPlugin[] = [];
     if (['.tsx', '.jsx'].some(ext => modulePath.endsWith(ext))) {
         plugins.push('jsx');
     }

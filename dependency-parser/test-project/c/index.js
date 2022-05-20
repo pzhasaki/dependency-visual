@@ -1,5 +1,3 @@
 const cc = 5;
 
-export {
-    cc
-};
+export * from '../a.js';
