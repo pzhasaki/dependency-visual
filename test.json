@@ -1,0 +1,47 @@
+"rootDir" : {
+    "path" : '',
+    children: [
+        'a.js' : {
+            "absoluePath": ,
+            "import": {
+                "./c.js": {
+
+                }
+            },
+            "export": {
+
+            },
+        }
+        'b.js' : {
+            "absoluePath": ,
+            "import": {
+
+            },
+            "export": {
+
+            },
+        }
+        'index.js' : {
+            "absoluePath": ,
+            "import": {
+
+            },
+            "export": {
+
+            },
+        },
+        "c": {
+            "path":
+            "children" : [
+                "index.js": {
+                    "absoluePath": ,
+                    "import": {
+        
+                    },
+                    "export": {
+        
+                    },
+            ]
+        }
+    ]
+}
