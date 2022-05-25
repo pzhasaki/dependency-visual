@@ -45,7 +45,7 @@ export default function analyseDependence(filePath: string, leaveNodeMap: Map<st
             waiter.push((leaveNodeMap: Map<string, LeaveNode>, referSet: Set<string>) => {
                 const reference = modulePath + '--' + filePath;
                 if (referSet.has(reference)) {
-                    leaveNode.imported[filePath].isReferEach = true;
+                    leaveNode.imported[modulePath].isReferEach = true;
                 }
                 leaveNode.imported[modulePath].node = leaveNodeMap.get(modulePath)!;
             });
